@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
@@ -343,7 +343,6 @@ class UserController extends Controller
     }
 
     public function imageSave($user, $images, $text){
-        $lang = App::getLocale();
         if($text == 'update'){
             if($user->images && !is_array($user->images)){
                 $user_images = json_decode($user->images);
@@ -367,8 +366,9 @@ class UserController extends Controller
 
         $mb = 1024 * 1024;
         $shrink_percent = 100;
-
         if (isset($images)) {
+
+            // Tasvirni olish
             $ProductImage = [];
             foreach ($images as $image) {
                 $image_size = $image->getSize();
@@ -412,33 +412,34 @@ class UserController extends Controller
 
                 // Yangi fayl nomini yaratish
                 $random = $this->setRandom();
-                $product_image_name = $random . date('Y-m-d_h-i-s') . '.' . $image->extension();
-
-                $img = Image::make($image->getRealPath());
-
-                // Shrink logic
-                if ($shrink_percent < 100) {
-                    $img->encode($image->extension(), $shrink_percent);
+                $product_image_name = $random . ''. date('Y-m-d_h-i-s') . '.' . $image->extension();
+                Image::configure(['driver'=>'imagick']);
+                $img = Image::make($image);
+                // Agar kichraytirish parametri mavjud bo'lsa
+                if ($shrink_percent <100) {
+                    // Sifatni kamaytirish
+                    $img->encode($image->extension(), $shrink_percent);  // Sifatni 75% ga kamaytirish
                 }
 
                 $img->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
+                    $constraint->aspectRatio(); // Aspekt nisbati saqlanadi
+                    $constraint->upsize(); // Rasmni kattalashmaslikka ruxsat berish
                 });
+                // Tasvirni belgilangan papkaga saqlash
+                $path = storage_path('app/public/users');  // Papka yo'li
 
-                $path = storage_path('app/public/users');
                 if (!file_exists($path)) {
-                    mkdir($path, 0755, true);
+                    mkdir($path, 0755, true);  // Papkani yaratish
                 }
-
                 $img->save($path . '/' . $product_image_name);
+
+                // Yangi tasvir nomini ma'lumotlar bazasida saqlash
                 $ProductImage[] = $product_image_name;
             }
-
             $all_product_images = array_values(array_merge($user_images, $ProductImage));
         }
 
-        $UserImage = json_encode($all_user_images ?? $user_images);
+        $UserImage = json_encode($all_user_images??$user_images);
         return $UserImage;
     }
     /**
