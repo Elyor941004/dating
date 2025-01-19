@@ -108,7 +108,8 @@ class HomeController extends Controller
 
     public function getRegions(Request $request){
         $language = 'ru';
-        $cities = Cities::where('parent_id', 0)->orderBy('id', 'ASC')->get();
+        // $cities = Cities::where('parent_id', 0)->orderBy('id', 'ASC')->get();
+        $cities = Cities::where('parent_id', 0)->whereIn('name', ['Toshkent shahri', 'Samarqand viloyati', 'Toshkent viloyati'])->orderBy('id', 'ASC')->get();
         $data = [];
         foreach ($cities as $city){
             $city_translate = table_translate_title($city,'city', $language);
