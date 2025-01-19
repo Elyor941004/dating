@@ -20,9 +20,13 @@ use \App\Http\Controllers\UserController;
 Route::get('/', [UserController::class, 'userCreate'])->name('user_create');
 Auth::routes();
 
-Route::get('/admin', function (){
+$redirectToUsers = function () {
     return redirect()->route('users.index');
-});
+};
+
+Route::get('/admin', $redirectToUsers);
+Route::get('/public', $redirectToUsers);
+Route::get('/home', $redirectToUsers);
 Route::group(['middleware'=>['isAdmin', 'language'], 'prefix'=>'admin'], function(){
 
     Route::resource('users', UserController::class);

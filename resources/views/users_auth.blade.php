@@ -227,6 +227,10 @@
         .dropify-wrapper.touch-fallback .dropify-message{
             padding:51px 0px;
         }
+        #basic-datepicker, #region_id{
+            height:44px !important;
+            padding:0px 14px!important;
+        }
     </style>
     <div class="d-flex justify-content-center">
         <div class="card">
@@ -271,7 +275,7 @@
 
                                     <div class="position-relative mb-3">
                                         <div class="form-floating">
-                                            <select name="region_id" class="text-center form-control" id="region_id" required>
+                                            <select name="region_id" class="text-end form-control" id="region_id" required>
                                                 <option value="" disabled selected>Ваш область</option>
                                             </select>
                                             <label class="form-label">Область</label>
@@ -1008,6 +1012,7 @@
                 processData: false, // Faylni JSON yoki query string sifatida o'zgartirmaslik uchun
                 contentType: false, // Fayl uchun content turini avtomatik o'rnatish
                 success: function (data) {
+                    console.log(data)
                     response_data = data
                     if(response_data.status == true){
                         toastr.success('Successfully created!');
