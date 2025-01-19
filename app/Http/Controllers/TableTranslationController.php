@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Language;
-use App\Models\CityTranslations;
+use App\Models\Cities;
 
 
 class TableTranslationController extends Controller

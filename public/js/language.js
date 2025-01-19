@@ -1,4 +1,4 @@
-let languages_url="/admin/language/language/update/value"
+let languages_url="/super-admin/language/language/update/value"
 function copyTranslation() {
     let old_value = ''
     $('.lang_key').each(function(index) {
